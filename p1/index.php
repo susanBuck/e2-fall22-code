@@ -1,19 +1,25 @@
-<!doctype html>
-<html lang='en'>
-<head>
+<?php
 
-    <title>Project 1</title>
-    <meta charset='utf-8'>
-    <link href=data:, rel=icon>
+$coin = ['heads', 'tails'];
 
-</head>
-<body>
+// Flip the coin for Player A
+$playerA = $coin[rand(0, 1)];
 
-<h1>Project 1</h1>
+// For Player B default to whatever side is left
+if ($playerA == 'heads') {
+    $playerB = 'tails';
+} else {
+    $playerB = 'heads';
+}
 
-<h2>Mechanics</h2>
-<ul>
-    <li>...<
+// Flip to pick the winning side
+$flip = $coin[rand(0, 1)];
 
-</body>
-</html>
+// Decide the winner
+if ($playerA == $flip) {
+    $winner = 'Player A';
+} else {
+    $winner = 'Player B';
+}
+
+require 'index-view.php';
