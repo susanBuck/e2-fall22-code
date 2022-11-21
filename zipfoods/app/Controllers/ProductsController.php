@@ -5,22 +5,12 @@ use App\Products;
 
 class ProductsController extends Controller
 {
-    private $productsObj;
-
-    # Create a construct method to set up a productsObj property that can be used across different methods
-    public function __construct($app)
-    {
-        parent::__construct($app);
-        
-        $this->productsObj = new Products($this->app->path('database/products.json'));
-    }
-
     /**
-     * This method is triggered by the route "/"
+     * GET /products
      */
     public function index()
     {
-        $products = $this->productsObj->getAll();
+        $products = $this->app->db()->all('products');
 
         return $this->app->view('products/index', ['products' => $products]);
     }
@@ -36,14 +26,15 @@ class ProductsController extends Controller
             $this->app->redirect('/products');
         }
        
-        $product = $this->productsObj->getBySku($sku);
+        $productQuery = $this->app->db()->findByColumn('products', 'sku', '=', $sku);
 
-        if (is_null($product)) {
+        if (empty($productQuery)) {
             return $this->app->view('products/missing');
+        } else {
+            $product = $productQuery[0];
         }
 
         $reviewSaved = $this->app->old('reviewSaved');
-
 
         return $this->app->view('products/show', [
             'product' => $product,
@@ -57,7 +48,7 @@ class ProductsController extends Controller
     public function saveReview()
     {
         $this->app->validate([
-            'sku' => 'required',
+            'product_id' => 'required',
             'name' => 'required',
             'review' => 'required|minLength:200'
         ]);
@@ -66,11 +57,16 @@ class ProductsController extends Controller
         # The user is redirected back to where they came from (/product)
         # None of the code that follows will be executed
 
+        $product_id = $this->app->input('product_id');
         $sku = $this->app->input('sku');
         $name = $this->app->input('name');
         $review = $this->app->input('review');
 
-        # Todo: Persist review to the database...
+        $this->app->db()->insert('reviews', [
+            'product_id' => $product_id,
+            'name' => $name,
+            'review' => $review
+        ]);
 
         return $this->app->redirect('/product?sku=' . $sku, ['reviewSaved' => true]);
     }
