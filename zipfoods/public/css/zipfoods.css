@@ -170,19 +170,4 @@ a.product-link:hover {
     padding: 10px;
 }
 
-#product-review {
-    margin: 20px auto;
-    max-width: 75%;
-    background-color: #eee;
-    border-radius: 3px;
-    padding: 10px;
-}
 
-#product-review input {
-    width: 200px;
-    margin: auto;
-}
-
-#product-review textarea {
-    height: 100px;
-}

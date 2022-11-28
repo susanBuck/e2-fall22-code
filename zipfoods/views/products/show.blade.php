@@ -4,6 +4,10 @@
     {{ $product['name'] }}
 @endsection
 
+@section('head')
+    <link href='/css/products/show.css' rel='stylesheet'>
+@endsection
+
 @section('content')
     @if ($reviewSaved)
         <div test='review-confirmation' class='alert alert-success'>Thank you, your review was submitted!</div>
@@ -22,7 +26,9 @@
             {{ $product['description'] }}
         </p>
 
-        <div class='product-price'>${{ $product['price'] }}</div>
+        <div class='product-price'>
+            ${{ $product['price'] }}
+        </div>
     </div>
 
     <form method='POST' id='product-review' action='/products/save-review'>
@@ -50,6 +56,21 @@
             @endforeach
         </ul>
     @endif
+
+    <div id='reviews'>
+        <h3>What our customers think...</h3>
+
+        @if (!$reviews)
+            There are no reviews for this product yet.
+        @endif
+
+        @foreach ($reviews as $review)
+            <div class='review'>
+                <div class='review-name'>{{ $review['name'] }}</div>
+                <div class='review-content'>{{ $review['review'] }}</div>
+            </div>
+        @endforeach
+    </div>
 
     <a href='/products'>&larr; Return to all products</a>
 @endsection

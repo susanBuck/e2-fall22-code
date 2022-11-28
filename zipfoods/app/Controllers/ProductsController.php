@@ -25,7 +25,7 @@ class ProductsController extends Controller
         if (is_null($sku)) {
             $this->app->redirect('/products');
         }
-       
+
         $productQuery = $this->app->db()->findByColumn('products', 'sku', '=', $sku);
 
         if (empty($productQuery)) {
@@ -36,9 +36,12 @@ class ProductsController extends Controller
 
         $reviewSaved = $this->app->old('reviewSaved');
 
+        $reviews = $this->app->db()->findByColumn('reviews', 'product_id', '=', $product['id']);
+        
         return $this->app->view('products/show', [
             'product' => $product,
-            'reviewSaved' => $reviewSaved
+            'reviewSaved' => $reviewSaved,
+            'reviews' => $reviews
         ]);
     }
 
@@ -69,5 +72,41 @@ class ProductsController extends Controller
         ]);
 
         return $this->app->redirect('/product?sku=' . $sku, ['reviewSaved' => true]);
+    }
+
+    /**
+     *
+     */
+    public function new()
+    {
+        $productSaved = $this->app->old('productSaved');
+        $sku = $this->app->old('sku');
+
+        return $this->app->view('products/new', [
+            'productSaved' => $productSaved,
+            'sku' => $sku,
+        ]);
+    }
+
+    /**
+     *
+     */
+    public function save()
+    {
+        $this->app->validate([
+            'name' => 'required',
+            'sku' => 'required|alphaNumericDash',
+            'description' => 'required',
+            'price' => 'required|numeric',
+            'available' => 'required|numeric',
+            'weight' => 'required|numeric'
+        ]);
+
+        $this->app->db()->insert('products', $this->app->inputAll());
+
+        $this->app->redirect('/products/new', [
+            'productSaved' => true,
+            'sku' => $this->app->input('sku')
+        ]);
     }
 }
