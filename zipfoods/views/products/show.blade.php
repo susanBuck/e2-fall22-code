@@ -26,7 +26,7 @@
             {{ $product['description'] }}
         </p>
 
-        <div class='product-price'>
+        <div test='product-price' class='product-price {{ $product['price'] < 10 ? 'product-price-sale' : '' }}'>
             ${{ $product['price'] }}
         </div>
     </div>
@@ -35,18 +35,20 @@
         <h3>Review {{ $product['name'] }}</h3>
         <input type='hidden' name='sku' value='{{ $product['sku'] }}'>
         <input type='hidden' name='product_id' value='{{ $product['id'] }}'>
+
         <div class='form-group'>
             <label for='name'>Name</label>
-            <input type='text' class='form-control' name='name' id='name' value='{{ $app->old('name') }}'>
+            <input type='text' test='reviewer-name-input' class='form-control' name='name' id='name'
+                value='{{ $app->old('name') }}'>
         </div>
 
         <div class='form-group'>
             <label for='review'>Review</label>
-            <textarea name='review' id='review' class='form-control'>{{ $app->old('review') }}</textarea>
+            <textarea name='review' test='review-textarea' id='review' class='form-control'>{{ $app->old('review') }}</textarea>
             (Min: 200 characters)
         </div>
 
-        <button type='submit' class='btn btn-primary'>Submit Review</button>
+        <button type='submit' test='review-submit-button' class='btn btn-primary'>Submit Review</button>
     </form>
 
     @if ($app->errorsExist())
@@ -66,8 +68,8 @@
 
         @foreach ($reviews as $review)
             <div class='review'>
-                <div class='review-name'>{{ $review['name'] }}</div>
-                <div class='review-content'>{{ $review['review'] }}</div>
+                <div class='review-name' test='review-name'>{{ $review['name'] }}</div>
+                <div class='review-content' test='review-content'>{{ $review['review'] }}</div>
             </div>
         @endforeach
     </div>
