@@ -1,25 +1,27 @@
 <?php
 
-
 namespace Tests\Acceptance;
 
 use Tests\Support\AcceptanceTester;
 
 class ProductPageCest
 {
-    // tests
+    /**
+    * Test that we can load the product page and see the expected content
+    */
     public function pageLoads(AcceptanceTester $I)
     {
         # Act
         $I->amOnPage('/product?sku=driscolls-strawberries');
-
+ 
         # Assert the correct title is set on the page
+        # <title>...</title>
         $I->seeInTitle('Driscoll’s Strawberries');
 
         # Assert the existence of certain text on the page
         $I->see('Driscoll’s Strawberries');
-
-        # Assert the existence of a certain element on the page
+ 
+        # Assert the exist ence of a certain element on the page
         $I->seeElement('.product-thumb');
 
         # Assert the existence of text within a specific element on the page
@@ -46,5 +48,32 @@ class ProductPageCest
         # Assert we see the review on the page
         $I->see($name, '[test=review-name]');
         $I->see($review, '[test=review-content]');
+    }
+
+    /**
+     * Test form validation is working for reviews
+     */
+    public function reviewValidationTest(AcceptanceTester $I)
+    {
+        # Act
+        $I->amOnPage('/product?sku=driscolls-strawberries');
+        $I->fillField('[test=reviewer-name-input]', 'Bob');
+        $I->fillField('[test=review-textarea]', 'This review is not long enough');
+        $I->click('[test=review-submit-button]');
+
+        # Assert we see the appropriate validation feedback
+        $I->see('The value for review must be at least 200 character(s) long');
+    }
+
+    /**
+     * Test product not found
+     */
+    public function productNotFound(AcceptanceTester $I)
+    {
+        # Act
+        $I->amOnPage('/product?sku=abc');
+
+        # Assert
+        $I->seeElement('[test=product-not-found-header]');
     }
 }
